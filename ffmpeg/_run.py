@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 from .dag import get_outgoing_edges, topo_sort
-from ._utils import basestring, convert_kwargs_to_cmd_line_args
-from builtins import str
+from ._utils import convert_kwargs_to_cmd_line_args
 from functools import reduce
+from six import string_types, text_type
 import collections
 import copy
 import operator
@@ -131,12 +131,12 @@ def _get_output_args(node, stream_name_map):
     if 'format' in kwargs:
         args += ['-f', kwargs.pop('format')]
     if 'video_bitrate' in kwargs:
-        args += ['-b:v', str(kwargs.pop('video_bitrate'))]
+        args += ['-b:v', text_type(kwargs.pop('video_bitrate'))]
     if 'audio_bitrate' in kwargs:
-        args += ['-b:a', str(kwargs.pop('audio_bitrate'))]
+        args += ['-b:a', text_type(kwargs.pop('audio_bitrate'))]
     if 'video_size' in kwargs:
         video_size = kwargs.pop('video_size')
-        if not isinstance(video_size, basestring) and isinstance(
+        if not isinstance(video_size, string_types) and isinstance(
             video_size, collections.Iterable
         ):
             video_size = '{}x{}'.format(video_size[0], video_size[1])
@@ -157,7 +157,7 @@ def get_args(stream_spec, overwrite_output=False):
     output_nodes = [node for node in sorted_nodes if isinstance(node, OutputNode)]
     global_nodes = [node for node in sorted_nodes if isinstance(node, GlobalNode)]
     filter_nodes = [node for node in sorted_nodes if isinstance(node, FilterNode)]
-    stream_name_map = {(node, None): str(i) for i, node in enumerate(input_nodes)}
+    stream_name_map = {(node, None): text_type(i) for i, node in enumerate(input_nodes)}
     filter_arg = _get_filter_arg(filter_nodes, outgoing_edge_maps, stream_name_map)
     args += reduce(operator.add, [_get_input_args(node) for node in input_nodes])
     if filter_arg:
@@ -183,7 +183,7 @@ def compile(stream_spec, cmd='ffmpeg', overwrite_output=False):
     This is the same as calling :meth:`get_args` except that it also
     includes the ``ffmpeg`` command as the first argument.
     """
-    if isinstance(cmd, basestring):
+    if isinstance(cmd, string_types):
         cmd = [cmd]
     elif type(cmd) != list:
         cmd = list(cmd)

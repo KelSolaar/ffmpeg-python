@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from builtins import str
+from six import text_type
 from .dag import get_outgoing_edges
 from ._run import topo_sort
 import tempfile
@@ -68,7 +68,7 @@ def view(stream_spec, detail=False, filename=None, pipe=False, **kwargs):
         else:
             node_text = node.short_repr
         graph.node(
-            str(hash(node)), node_text, shape='box', style='filled', fillcolor=color
+            text_type(hash(node)), node_text, shape='box', style='filled', fillcolor=color
         )
         outgoing_edge_map = outgoing_edge_maps.get(node, {})
 
@@ -94,8 +94,8 @@ def view(stream_spec, detail=False, filename=None, pipe=False, **kwargs):
                 else:
                     middle = ''
                 kwargs['label'] = '{}  {}  {}'.format(up_label, middle, down_label)
-            upstream_node_id = str(hash(edge.upstream_node))
-            downstream_node_id = str(hash(edge.downstream_node))
+            upstream_node_id = text_type(hash(edge.upstream_node))
+            downstream_node_id = text_type(hash(edge.downstream_node))
             graph.edge(upstream_node_id, downstream_node_id, **kwargs)
 
     if pipe:
