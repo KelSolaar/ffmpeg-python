@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from builtins import bytes
 from builtins import range
-from builtins import str
+from six import text_type
 import ffmpeg
 import os
 import pytest
@@ -228,15 +228,15 @@ def test_get_item_with_bad_selectors():
 
     with pytest.raises(ValueError) as excinfo:
         input['a']['a']
-    assert str(excinfo.value).startswith('Stream already has a selector:')
+    assert text_type(excinfo.value).startswith('Stream already has a selector:')
 
     with pytest.raises(TypeError) as excinfo:
         input[:'a']
-    assert str(excinfo.value).startswith("Expected string index (e.g. 'a')")
+    assert text_type(excinfo.value).startswith("Expected string index (e.g. 'a')")
 
     with pytest.raises(TypeError) as excinfo:
         input[5]
-    assert str(excinfo.value).startswith("Expected string index (e.g. 'a')")
+    assert text_type(excinfo.value).startswith("Expected string index (e.g. 'a')")
 
 
 def _get_complex_filter_asplit_example():
@@ -314,7 +314,7 @@ def test_filter_concat__wrong_stream_count():
     with pytest.raises(ValueError) as excinfo:
         ffmpeg.concat(in1.video, in1.audio, in2.hflip(), v=1, a=1).node
     assert (
-        str(excinfo.value)
+        text_type(excinfo.value)
         == 'Expected concat input streams to have length multiple of 2 (v=1, a=1); got 3'
     )
 
@@ -496,7 +496,7 @@ def test__run__error(mocker, capture_stdout, capture_stderr):
         out, err = ffmpeg.run(
             stream, capture_stdout=capture_stdout, capture_stderr=capture_stderr
         )
-    assert str(excinfo.value) == 'ffmpeg error (see stderr output for detail)'
+    assert text_type(excinfo.value) == 'ffmpeg error (see stderr output for detail)'
     out = excinfo.value.stdout
     err = excinfo.value.stderr
     if capture_stdout:
@@ -709,7 +709,7 @@ def test__probe():
 def test__probe__exception():
     with pytest.raises(ffmpeg.Error) as excinfo:
         ffmpeg.probe(BOGUS_INPUT_FILE)
-    assert str(excinfo.value) == 'ffprobe error (see stderr output for detail)'
+    assert text_type(excinfo.value) == 'ffprobe error (see stderr output for detail)'
     assert 'No such file or directory'.encode() in excinfo.value.stderr
 
 

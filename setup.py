@@ -70,7 +70,7 @@ setup(
     download_url=download_url,
     keywords=keywords,
     long_description=long_description,
-    install_requires=['future'],
+    install_requires=['future', 'six'],
     extras_require={
         'dev': [
             'future==0.17.1',
@@ -78,6 +78,7 @@ setup(
             'pytest-mock==1.10.4',
             'pytest==4.6.1',
             'Sphinx==2.1.0',
+            'six==1.10.0',
             'tox==3.12.1',
         ]
     },
